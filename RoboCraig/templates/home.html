@@ -1,24 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-{#    {% for search in searches %}#}
-{#        <article class="media content-section">#}
-{#          <div class="media-body">#}
-{#            <div class="article-metadata">#}
-{#              <a class="mr-2" href="{{ url_for('user_searches', username=search.author.username) }}"></a>#}
-{#              <small class="text-muted">                        </small>#}
-{#                #}
-{#            </div>#}
-{#            <h2><a class="article-title" href="{{ url_for('search', search_id=search.id) }}">{{ search.search_term }}</a></h2>#}
-{#            <p class="article-content">category: <b>{{ search.category }}</b></p>#}
-{#            <p class="article-content">from zip code: <b>{{ search.zip_code }}</b></p>#}
-{#            <p class="article-content">max distance location in miles: <b>{{ search.max_distance }}</b> miles</p>#}
-{#            <p class="article-content">Price: <b>${{ search.max_price }}</b></p>#}
-{#            <p>{{ baseurl }}</p>#}
-{#          </div>#}
-{##}
-{#        </article>#}
-{#    {% endfor %}#}
-
 
         <table class="table table-striped">
             <thead>
@@ -48,14 +29,7 @@
                         </form>
                     </td>
                 </tr>
-{#                </tr>#}
-{#                <td>{{ j[0] }}</td>#}
-{#                <td>{{ j[1] }}</td>#}
-{#                <td>{{ j[2] }}</td>#}
-{#                <td><img src="{{ j[3] }}"</td>#}
-{#                <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>#}
-{#                <td><a href="{{ j[3] }}" target="_blank">Craigslist Post Link</a></td>#}
-{#                <td><img src="{{ j[4] }}"</td>#}
+
             {% endfor %}
             </tbody>
         </table>

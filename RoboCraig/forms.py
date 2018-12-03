@@ -56,13 +56,8 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
 
 
-#Attempting to make a form modeled on the above form
 class SearchForm(FlaskForm):
     category = SelectField('Category', choices=[('ata','Antiques'),('ppa','Appliances'),('ara','Arts & Crafts'),('sna','ATV/UTV/SNO'),('pta','AutoParts'),
                                                 ('ava','Aviation'),('baa','Baby and Kid Stuff'),('haa','Beauty and Health'),('bip','Bike Parts'),
@@ -75,31 +70,9 @@ class SearchForm(FlaskForm):
                                                 ('tia','Tickets') ,('tla','Tools') ,('taa','Toys & Games') ,('tra','Trailers') ,
                                                 ('vga','Video Gaming') ,('wta','Wheels & Tires')], validators=[DataRequired()])
 
-
-
     search_term = StringField('Search Term', validators=[DataRequired()])
     zip_code = StringField('Zip Code', validators=[DataRequired()])
     max_distance = StringField('Max Distance', validators=[DataRequired()])
     max_price = StringField('Max Price', validators=[DataRequired()])
     submit = SubmitField('Post')
 
-
-# class Post(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(100), nullable=False)
-#     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-#     content = db.Column(db.Text, nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#
-#     def __repr__(self):
-#         return f"Post('{self.title}', '{self.date_posted}')"
-#
-#
-# class Searcher (db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     category = db.Column(db.String(20), nullable=False)
-#     search_term = db.Column(db.String(50), nullable=False)
-#     zip_code = db.Column(db.String(10), nullable=False)  #Might need this to be int, or validate to 5 digits
-#     max_distance = db.Column(db.String(10), nullable=False)
-#     max_price = db.Column(db.String(10), nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

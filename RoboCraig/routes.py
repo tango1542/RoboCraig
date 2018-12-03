@@ -7,14 +7,6 @@ from bs4 import BeautifulSoup
 import urllib.request
 
 
-
-# @app.route("/")
-# @app.route("/home")
-# def home():
-#     posts = Post.query.all()
-#     return render_template('home.html', posts=posts)
-
-
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
@@ -125,8 +117,6 @@ def user_posts(username):
     else:
         abort(403)
 
-
-
 #Trying to get New Craigslist Search form route
 
 @app.route("/search/new",methods=['GET', 'POST'])
@@ -150,30 +140,6 @@ def new_search():
 @login_required
 def home_search():
     searches = Searcher.query.all()
-
-    #Trying to move this to the scrapedresults page.  Can move it back if it doesn't work
-    # qsearches=[]
-    # for search in searches:
-    #     print ("This is search")
-    #     print (search)
-    #     baseurl = 'https://minneapolis.craigslist.org/search/' + search.category + '?query=' + search.search_term + '&search_distance=' + search.max_distance + '&postal=' + search.zip_code + '&max_price=' + search.max_price
-    #     qsearches.append(baseurl)
-    #     print ("This is baseurl")
-    #     print (baseurl)
-    #     print (search.category)
-    #     print(search.search_term)
-    #     print (search.zip_code)
-    #     print (search.max_distance)
-    #     print(search.max_price)
-    #
-    # #testing the porting of the info into a URL here
-    # print ("This is qsearches")
-    # print (qsearches)
-    # for qsearch in qsearches:
-    #     print ("qsearch: " + qsearch)
-
-
-
 
     craigurl = 'https://minneapolis.craigslist.org/search/bia?query=bianchi&srchType=T&hasPic=1&search_distance=6&postal=55407&min_price=5&max_price=400'
     # baseurl = 'https://minneapolis.craigslist.org/search/?query=bianchi&search_distance=6&postal=55407&min_price=5&max_price=400'
@@ -231,8 +197,7 @@ def update_search(search_id):
         search.max_price = form.max_price.data
         author = current_user
 
-        # post.title = form.title.data
-        # post.content = form.content.data
+
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('home_search', search_id=search.id))

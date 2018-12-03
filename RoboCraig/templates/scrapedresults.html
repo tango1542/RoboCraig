@@ -1,40 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Scraped</h1>
+
+<h1>Scraped Results</h1>
 
 
-{#{% for j in gaaah %}:#}
-{% for j in gaaah %}:
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Link</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ j[0] }}</td>
-                    <td>{{ j[1] }}</td>
-                    <td>{{ j[2] }}</td>
-                    <td><img src="{{ j[3] }}"</td>
-                    <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>
-                </tr>
-{#                </tr>#}
-{#                <td>{{ j[0] }}</td>#}
-{#                <td>{{ j[1] }}</td>#}
-{#                <td>{{ j[2] }}</td>#}
-{#                <td><img src="{{ j[3] }}"</td>#}
-{#                <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>#}
-{#                <td><a href="{{ j[3] }}" target="_blank">Craigslist Post Link</a></td>#}
-{#                <td><img src="{{ j[4] }}"</td>#}
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Posted</th>
+            <th scope="col">Image</th>
+            <th scope="col">Link</th>
+        </tr>
+    </thead>
 
-            </tbody>
-        </table>
+    <tbody>
+
+    {% for j in gaaah %}:
+        <tr>
+            <td>{{ j[0] }}</td>
+            <td>{{ j[1] }}</td>
+            <td>{{ j[2] }}</td>
+            <td><img src="{{ j[3] }}"</td>
+            <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>
+        </tr>
+
+
+    {% endfor %}
+    </tbody>
+</table>
 {#    <p>{{ title }}</p>#}
 
-{% endfor %}
+
 {% endblock content %}
