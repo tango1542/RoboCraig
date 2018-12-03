@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3">Posts by {{ user.username }} ({{ posts.total }})</h1>
+    {% for post in posts %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('user_searches', username=search.author.username) }}">{{ search.author.username }}</a>
+              <small class="text-muted">{{ search.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('search', search_id=search.id) }}">{{ search.search_term }}</a></h2>
+            <p class="article-content">{{ search.searh_term }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

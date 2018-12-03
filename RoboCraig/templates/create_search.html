@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ legend }}</legend>
+
+                <div class="form-group">
+                    {{ form.category.label(class="form-control-label") }}
+                    {% if form.category.errors %}
+                        {{ form.category(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.category(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.search_term.label(class="form-control-label") }}
+                    {% if form.search_term.errors %}
+                        {{ form.search_term(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.search_term(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.zip_code.label(class="form-control-label") }}
+                    {% if form.zip_code.errors %}
+                        {{ form.zip_code(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.zip_code(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.max_distance.label(class="form-control-label") }}
+                    {% if form.max_distance.errors %}
+                        {{ form.max_distance(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.max_distance(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.max_price.label(class="form-control-label") }}
+                    {% if form.max_price.errors %}
+                        {{ form.max_price(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.max_price(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+{#                <div class="form-group">#}
+{#                    {{ form.content.label(class="form-control-label") }}#}
+{#                    {% if form.content.errors %}#}
+{#                        {{ form.content(class="form-control form-control-lg is-invalid") }}#}
+{#                        <div class="invalid-feedback">#}
+{#                            {% for error in form.password.errors %}#}
+{#                                <span>{{ error }}</span>#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    {% else %}#}
+{#                        {{ form.content(class="form-control form-control-lg") }}#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#            #}
+{#                <div class="form-group">#}
+{#                    {{ form.content.label(class="form-control-label") }}#}
+{#                    {% if form.content.errors %}#}
+{#                        {{ form.content(class="form-control form-control-lg is-invalid") }}#}
+{#                        <div class="invalid-feedback">#}
+{#                            {% for error in form.password.errors %}#}
+{#                                <span>{{ error }}</span>#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    {% else %}#}
+{#                        {{ form.content(class="form-control form-control-lg") }}#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#            #}
+{#                <div class="form-group">#}
+{#                    {{ form.content.label(class="form-control-label") }}#}
+{#                    {% if form.content.errors %}#}
+{#                        {{ form.content(class="form-control form-control-lg is-invalid") }}#}
+{#                        <div class="invalid-feedback">#}
+{#                            {% for error in form.password.errors %}#}
+{#                                <span>{{ error }}</span>#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    {% else %}#}
+{#                        {{ form.content(class="form-control form-control-lg") }}#}
+{#                    {% endif %}#}
+{#                </div>#}
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
