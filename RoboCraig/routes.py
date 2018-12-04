@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, abort
 from RoboCraig import app, db, bcrypt
-from RoboCraig.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
-from RoboCraig.models import User, Post, Searcher
+from RoboCraig.forms import RegistrationForm, LoginForm, UpdateAccountForm,SearchForm
+from RoboCraig.models import User,Searcher
 from flask_login import login_user, current_user, logout_user, login_required
 from bs4 import BeautifulSoup
 import urllib.request
@@ -15,7 +15,7 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('user_searches'))  #maybe check this later if there is an error
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -29,15 +29,15 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('home_search'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('user_searches',username=user.username))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -55,58 +55,58 @@ def account():
     return render_template('account.html', title='Account')
 
 
-@app.route("/post/new",methods=['GET', 'POST'])
-@login_required
-def new_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash('Your post has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('create_post.html', title='New Post', form=form,legend='New Post')
+# @app.route("/post/new",methods=['GET', 'POST'])
+# @login_required
+# def new_post():
+#     form = PostForm()
+#     if form.validate_on_submit():
+#         post = Post(title=form.title.data, content=form.content.data, author=current_user)
+#         db.session.add(post)
+#         db.session.commit()
+#         flash('Your post has been created!', 'success')
+#         return redirect(url_for('home'))
+#     return render_template('create_post.html', title='New Post', form=form,legend='New Post')
 
-@app.route("/post/<int:post_id>")
-def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+# @app.route("/post/<int:post_id>")
+# def post(post_id):
+#     post = Post.query.get_or_404(post_id)
+#     return render_template('post.html', title=post.title, post=post)
+#
+# @app.route("/post/<int:post_id>/update",methods=['GET', 'POST'])
+# @login_required
+# def update_post(post_id):
+#     post = Post.query.get_or_404(post_id)
+#     if post.author != current_user:
+#         abort(403)
+#     form = PostForm()
+#     if form.validate_on_submit():
+#         post.title = form.title.data
+#         post.content = form.content.data
+#         db.session.commit()
+#         flash('Your post has been updated!', 'success')
+#         return redirect(url_for('post', post_id=post.id))
+#     elif request.method == 'GET':
+#         form.title.data = post.title
+#         form.content.data = post.content
+#     return render_template('create_post.html', title='Update Post', form=form, legend='Update Post')
 
-@app.route("/post/<int:post_id>/update",methods=['GET', 'POST'])
-@login_required
-def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-        db.session.commit()
-        flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', post_id=post.id))
-    elif request.method == 'GET':
-        form.title.data = post.title
-        form.content.data = post.content
-    return render_template('create_post.html', title='Update Post', form=form, legend='Update Post')
 
-
-@app.route("/post/<int:post_id>/delete",methods=['POST'])
-@login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    db.session.delete(post)
-    db.session.commit()
-    flash('Your post has been deleted!', 'success')
-    return redirect(url_for('home_search'))
+# @app.route("/post/<int:post_id>/delete",methods=['POST'])
+# @login_required
+# def delete_post(post_id):
+#     post = Post.query.get_or_404(post_id)
+#     if post.author != current_user:
+#         abort(403)
+#     db.session.delete(post)
+#     db.session.commit()
+#     flash('Your post has been deleted!', 'success')
+#     return redirect(url_for('home_search'))
 
 @app.route("/user/<string:username>")  #user/username url as the home page will only display posts from the logged in user
 def user_posts(username):
 
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user)
+    posts = Searcher.query.filter_by(author=user)
 
     print ("current_user: " + str(current_user))
     print ("user: " + str(user))
@@ -116,6 +116,23 @@ def user_posts(username):
         return render_template('user_posts.html', posts=posts, user=user)
     else:
         abort(403)
+
+#I need this one to according to an error
+@app.route("/users/<string:username>")  #user/username url as the home page will only display posts from the logged in user
+def user_searches(username):
+
+    user = User.query.filter_by(username=username).first_or_404()
+    searches = Searcher.query.filter_by(author=user)
+
+    print ("current_user: " + str(current_user))
+    print ("user: " + str(user))
+    print ("username: " + str(username))
+
+    if current_user == user:
+        return render_template('user_searches.html', searches=searches, user=user)
+    else:
+        abort(403)
+
 
 #Trying to get New Craigslist Search form route
 
@@ -136,6 +153,9 @@ def new_search():
 #making a home route for the above for search.  Modeling it after the home route
 
 @app.route("/")
+def landing():
+    return render_template('landing.html')
+
 @app.route("/home")
 @login_required
 def home_search():
@@ -146,21 +166,7 @@ def home_search():
 
     return render_template('home.html', searches=searches, craigurl=craigurl,)
 
-#I need this one to according to an error
-@app.route("/user/<string:username>")  #user/username url as the home page will only display posts from the logged in user
-def user_searches(username):
 
-    user = User.query.filter_by(username=username).first_or_404()
-    searches = Searcher.query.filter_by(author=user)
-
-    print ("current_user: " + str(current_user))
-    print ("user: " + str(user))
-    print ("username: " + str(username))
-
-    if current_user == user:
-        return render_template('user_searches.html', searches=searches, user=user)
-    else:
-        abort(403)
 
 #I am adding this because I was getting a search_id error
 @app.route("/search/<int:search_id>")
@@ -214,12 +220,16 @@ def update_search(search_id):
 
 #Attempting to do the scraper route here that will actually have the results of a correct URL scraped
 
-@app.route("/scrapedresults")
-def scrapedresults():
+@app.route("/scrapedresults/<string:username>")
+def scrapedresults(username):
 
     # Moving the section from home_search here to try to make the url strings.  Can move back if it doesn't work
 
     searches = Searcher.query.all()
+
+    user = User.query.filter_by(username=username).first_or_404()
+    searches = Searcher.query.filter_by(author=user)
+
 
     qsearches = []
     for search in searches:
@@ -232,7 +242,7 @@ def scrapedresults():
         print ("This is search.category")
         print(search.category)
 
-        baseurl = 'https://minneapolis.craigslist.org/search/' + search.category + '?query=' + search_term_replace + '&hasPic=1&search_distance=' + search.max_distance + '&postal=' + search.zip_code + '&min_price=3&max_price=' + search.max_price
+        baseurl = 'https://minneapolis.craigslist.org/search/' + search.category + '?query=' + search_term_replace + '&srchType=T&hasPic=1&search_distance=' + search.max_distance + '&postal=' + search.zip_code + '&min_price=3&max_price=' + search.max_price
         qsearches.append(baseurl)
         print("This is baseurl")
         print(baseurl)
@@ -310,5 +320,9 @@ def scrapedresults():
 
     for item in gaaah:
         print (item)
-    return render_template('scrapedresults.html', clist=clist, new_url_list=new_url_list,titles_list=titles_list,prices_list=prices_list,date_posted_list=date_posted_list,images_list=images_list, gaaah=gaaah, qsearches=qsearches)
+
+    if current_user == user:
+        return render_template('scrapedresults.html', clist=clist, new_url_list=new_url_list,titles_list=titles_list,prices_list=prices_list,date_posted_list=date_posted_list,images_list=images_list, gaaah=gaaah, qsearches=qsearches)
+    else:
+        abort (403)
 

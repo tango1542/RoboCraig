@@ -11,7 +11,6 @@
             <th scope="col">Price</th>
             <th scope="col">Posted</th>
             <th scope="col">Image</th>
-            <th scope="col">Link</th>
         </tr>
     </thead>
 
@@ -19,11 +18,11 @@
 
     {% for j in gaaah %}:
         <tr>
-            <td>{{ j[0] }}</td>
+            <td><a href="{{ j[4] }}" target="_blank">{{ j[0] }}</a></td>
             <td>{{ j[1] }}</td>
             <td>{{ j[2] }}</td>
             <td><img src="{{ j[3] }}"</td>
-            <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>
+{#            <td><a href="{{ j[4] }}" target="_blank">Craigslist Post Link</a></td>#}
         </tr>
 
 

@@ -1,16 +1,51 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="mb-3">Posts by {{ user.username }} ({{ posts.total }})</h1>
-    {% for post in posts %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{{ url_for('user_searches', username=search.author.username) }}">{{ search.author.username }}</a>
-              <small class="text-muted">{{ search.date_posted.strftime('%Y-%m-%d') }}</small>
-            </div>
-            <h2><a class="article-title" href="{{ url_for('search', search_id=search.id) }}">{{ search.search_term }}</a></h2>
-            <p class="article-content">{{ search.searh_term }}</p>
-          </div>
-        </article>
-    {% endfor %}
+{#    <h1 class="mb-3">Posts by {{ user.username }}</h1>#}
+{#    {% for search in searches %}#}
+{#        <article class="media content-section">#}
+{#          <div class="media-body">#}
+{#            <div class="article-metadata">#}
+{#              <a class="mr-2" href="{{ url_for('user_searches', username=search.author.username) }}">{{ search.author.username }}</a>#}
+{#              <small class="text-muted">{{ search.date_posted.strftime('%Y-%m-%d') }}</small>#}
+{#            </div>#}
+{#            <h2><a class="article-title" href="{{ url_for('search', search_id=search.id) }}">{{ search.search_term }}</a></h2>#}
+{#            <p class="article-content">{{ search.searh_term }}</p>#}
+{#          </div>#}
+{#        </article>#}
+{#    {% endfor %}#}
+
+    <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Search Item</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Zip Code</th>
+                    <th scope="col">Max Distance</th>
+                    <th scope="col">Max Price</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for hs in searches %}
+            <tr>
+                    <td><a href="{{ url_for('search', search_id=hs.id) }}">{{ hs.search_term }}</a></td>
+                    <td>{{ hs.category}}</td>
+                    <td>{{ hs.zip_code }}</td>
+                    <td>{{ hs.max_distance }} miles</td>
+                    <td>${{ hs.max_price }}</td>
+                    <td><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_search', search_id = hs.id) }}">Update</a></td>
+                    <td>
+                        <form action="{{ url_for('delete_search', search_id=hs.id) }}" method="POST">
+                            <input class="btn btn-danger btn-sm m-1" type = "submit" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+    </table>
+
+
+
 {% endblock content %}
