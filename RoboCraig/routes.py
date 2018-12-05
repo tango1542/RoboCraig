@@ -7,23 +7,18 @@ from bs4 import BeautifulSoup
 import urllib.request
 
 
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
-
-
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('user_searches'))  #maybe check this later if there is an error
+    if current_user.is_authenticated:    #If the user is authenticted, they will be redirected to their saved searches
+        return redirect(url_for('user_searches'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')     #This is creating the hashed password using bcryp
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)      #Creating the user object from the form data
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created.  You are now able to log in','success')
-        return redirect(url_for('home_search'))
+        return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
 
@@ -37,7 +32,8 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('user_searches',username=user.username))
+            # return redirect(next_page) if next_page else redirect(url_for('user_searches',username=user.username))
+            return redirect(url_for('user_searches',username=user.username))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -52,7 +48,8 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    print (current_user)
+    return render_template('account.html', title='Account',username=current_user.username)
 
 
 # @app.route("/post/new",methods=['GET', 'POST'])
@@ -129,9 +126,11 @@ def user_searches(username):
     print ("username: " + str(username))
 
     if current_user == user:
-        return render_template('user_searches.html', searches=searches, user=user)
+        return render_template('user_searches.html', searches=searches, user=user, username=username)
     else:
         abort(403)
+
+
 
 
 #Trying to get New Craigslist Search form route
@@ -140,6 +139,9 @@ def user_searches(username):
 @login_required
 def new_search():
     form = SearchForm()
+    print ("current_user: " + str(current_user))
+    # print ("user: " + str(user))
+    # print ("username: " + str(username))
     if form.validate_on_submit():
         searcher = Searcher(category=form.category.data, search_term=form.search_term.data,
                           zip_code=form.zip_code.data, max_distance=form.max_distance.data,
@@ -148,19 +150,36 @@ def new_search():
         db.session.commit()
         flash('Your search has been created!', 'success')
         return redirect(url_for('home_search'))
-    return render_template('create_search.html', form=form,legend='New Post')
+    return render_template('create_search.html', form=form,legend='New Post',username=current_user.username)
 
 #making a home route for the above for search.  Modeling it after the home route
 
 @app.route("/")
 def landing():
-    return render_template('landing.html')
 
-@app.route("/home")
+    # print (current_user.username)
+    if current_user.is_authenticated:
+        print ("hello there")
+        print ("current user.username is " + current_user.username)
+        return redirect(url_for('user_searches',username=current_user.username))
+
+    else:
+        print ("it got here")
+        print (current_user)
+        return render_template('landing.html')
+
+
+
+@app.route("/home")         #
 @login_required
 def home_search():
     searches = Searcher.query.all()
+    search = User.query.all()
+    for s in searches:
+        print (s)
+        print (s.author.username)
 
+    print ()
     craigurl = 'https://minneapolis.craigslist.org/search/bia?query=bianchi&srchType=T&hasPic=1&search_distance=6&postal=55407&min_price=5&max_price=400'
     # baseurl = 'https://minneapolis.craigslist.org/search/?query=bianchi&search_distance=6&postal=55407&min_price=5&max_price=400'
 
@@ -220,7 +239,7 @@ def update_search(search_id):
 
 #Attempting to do the scraper route here that will actually have the results of a correct URL scraped
 
-@app.route("/scrapedresults/<string:username>")
+@app.route("/search_results/<string:username>")
 def scrapedresults(username):
 
     # Moving the section from home_search here to try to make the url strings.  Can move back if it doesn't work
@@ -230,6 +249,7 @@ def scrapedresults(username):
     user = User.query.filter_by(username=username).first_or_404()
     searches = Searcher.query.filter_by(author=user)
 
+    search_term_rep_list = []
 
     qsearches = []
     for search in searches:
@@ -238,6 +258,7 @@ def scrapedresults(username):
         search_term_replace = search.search_term.replace(" ","+")  #Putting this here so the search term is concatenated with +'s in the craigslist request url
         print ("This is search_term_replace")
         print (search_term_replace)
+        search_term_rep_list.append(search_term_replace)
 
         print ("This is search.category")
         print(search.category)
@@ -258,6 +279,8 @@ def scrapedresults(username):
     for qsearch in qsearches:
         print("qsearch: " + qsearch)
 
+    print ("This is search_term_rep_list")
+    print (search_term_rep_list)
     #finished moving qsearches here
 
 
@@ -286,6 +309,9 @@ def scrapedresults(username):
         soup = BeautifulSoup(html_page, "lxml")
 
         for post in soup.find_all('li', "result-row"):
+
+            # print ("This is post length")
+            # print (len(post))
 
             for po in post.find_all("a","result-title hdrlnk"):  #titles loop, works properlly
                 titles_list.append(po.text)
@@ -322,7 +348,7 @@ def scrapedresults(username):
         print (item)
 
     if current_user == user:
-        return render_template('scrapedresults.html', clist=clist, new_url_list=new_url_list,titles_list=titles_list,prices_list=prices_list,date_posted_list=date_posted_list,images_list=images_list, gaaah=gaaah, qsearches=qsearches)
+        return render_template('search_results.html', clist=clist, new_url_list=new_url_list,titles_list=titles_list,prices_list=prices_list,date_posted_list=date_posted_list,images_list=images_list, gaaah=gaaah, qsearches=qsearches, username=username)
     else:
         abort (403)
 
