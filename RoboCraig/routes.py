@@ -24,179 +24,81 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('home_search'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
+            login_user(user, remember=form.remember.data)       #uses login_user method to login user
+            # next_page = request.args.get('next')
             # return redirect(next_page) if next_page else redirect(url_for('user_searches',username=user.username))
-            return redirect(url_for('user_searches',username=user.username))
+            return redirect(url_for('user_searches',username=user.username))        #if they are properly logged in, they are sent to the saved searches route
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Login Unsuccessful. Please check email and password', 'danger')      #if login is unsuccessful, they are sent back to the login
     return render_template('login.html', title='Login', form=form)
 
 
 @app.route("/logout")
 def logout():
-    logout_user()
+    logout_user()    #using the flask login module to logout
     return redirect(url_for('home_search'))
 
 
 @app.route("/account")
 @login_required
 def account():
-    print (current_user)
     return render_template('account.html', title='Account',username=current_user.username)
 
 
-# @app.route("/post/new",methods=['GET', 'POST'])
-# @login_required
-# def new_post():
-#     form = PostForm()
-#     if form.validate_on_submit():
-#         post = Post(title=form.title.data, content=form.content.data, author=current_user)
-#         db.session.add(post)
-#         db.session.commit()
-#         flash('Your post has been created!', 'success')
-#         return redirect(url_for('home'))
-#     return render_template('create_post.html', title='New Post', form=form,legend='New Post')
-
-# @app.route("/post/<int:post_id>")
-# def post(post_id):
-#     post = Post.query.get_or_404(post_id)
-#     return render_template('post.html', title=post.title, post=post)
-#
-# @app.route("/post/<int:post_id>/update",methods=['GET', 'POST'])
-# @login_required
-# def update_post(post_id):
-#     post = Post.query.get_or_404(post_id)
-#     if post.author != current_user:
-#         abort(403)
-#     form = PostForm()
-#     if form.validate_on_submit():
-#         post.title = form.title.data
-#         post.content = form.content.data
-#         db.session.commit()
-#         flash('Your post has been updated!', 'success')
-#         return redirect(url_for('post', post_id=post.id))
-#     elif request.method == 'GET':
-#         form.title.data = post.title
-#         form.content.data = post.content
-#     return render_template('create_post.html', title='Update Post', form=form, legend='Update Post')
-
-
-# @app.route("/post/<int:post_id>/delete",methods=['POST'])
-# @login_required
-# def delete_post(post_id):
-#     post = Post.query.get_or_404(post_id)
-#     if post.author != current_user:
-#         abort(403)
-#     db.session.delete(post)
-#     db.session.commit()
-#     flash('Your post has been deleted!', 'success')
-#     return redirect(url_for('home_search'))
-
-@app.route("/user/<string:username>")  #user/username url as the home page will only display posts from the logged in user
-def user_posts(username):
-
-    user = User.query.filter_by(username=username).first_or_404()
-    posts = Searcher.query.filter_by(author=user)
-
-    print ("current_user: " + str(current_user))
-    print ("user: " + str(user))
-    print ("username: " + str(username))
-
-    if current_user == user:
-        return render_template('user_posts.html', posts=posts, user=user)
-    else:
-        abort(403)
-
-#I need this one to according to an error
-@app.route("/users/<string:username>")  #user/username url as the home page will only display posts from the logged in user
+@app.route("/users/<string:username>")  #This is the main home route for a logged in user.  It will display their saved searches
 def user_searches(username):
-
-    user = User.query.filter_by(username=username).first_or_404()
-    searches = Searcher.query.filter_by(author=user)
-
-    print ("current_user: " + str(current_user))
-    print ("user: " + str(user))
-    print ("username: " + str(username))
-
-    if current_user == user:
+    user = User.query.filter_by(username=username).first_or_404()  #giving the function the username attribute returns the username of the current_user
+    searches = Searcher.query.filter_by(author=user)   #Using this username, it retrieves a list of their Searcher objects
+    if current_user == user:        #Will only render the template if the user is logged in.  Otherwise, they receive a 403
         return render_template('user_searches.html', searches=searches, user=user, username=username)
     else:
         abort(403)
 
 
-
-
-#Trying to get New Craigslist Search form route
-
-@app.route("/search/new",methods=['GET', 'POST'])
+@app.route("/search/new",methods=['GET', 'POST'])       #This route is for creating a new_search
 @login_required
 def new_search():
-    form = SearchForm()
-    print ("current_user: " + str(current_user))
-    # print ("user: " + str(user))
-    # print ("username: " + str(username))
-    if form.validate_on_submit():
-        searcher = Searcher(category=form.category.data, search_term=form.search_term.data,
+    form = SearchForm()     #creating a new SearchForm object
+    if form.validate_on_submit():       #From Flask-WTF forms, validate_on_submit will validate the form
+        searcher = Searcher(category=form.category.data, search_term=form.search_term.data,     #If the form is valid, it is put into the database and committed
                           zip_code=form.zip_code.data, max_distance=form.max_distance.data,
                           max_price=form.max_price.data, author=current_user)
         db.session.add(searcher)
         db.session.commit()
         flash('Your search has been created!', 'success')
         return redirect(url_for('home_search'))
-    return render_template('create_search.html', form=form,legend='New Post',username=current_user.username)
+    return render_template('create_search.html', form=form,legend='New Post',username=current_user.username)  #If the form is not valid, the user stays on the create_serach page
 
-#making a home route for the above for search.  Modeling it after the home route
 
-@app.route("/")
+@app.route("/")     #This is the route for the non-logged in user.
 def landing():
-
-    # print (current_user.username)
-    if current_user.is_authenticated:
-        print ("hello there")
-        print ("current user.username is " + current_user.username)
+    if current_user.is_authenticated:       #A logged in user would be redirected to their home_search route
         return redirect(url_for('user_searches',username=current_user.username))
-
-    else:
-        print ("it got here")
-        print (current_user)
+    else:       #An unauthenticated user would get to the main greeting page
         return render_template('landing.html')
 
 
-
-@app.route("/home")         #
-@login_required
+@app.route("/home")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
+@login_required         #Regardless, only a logged in user can view this page
 def home_search():
-    searches = Searcher.query.all()
-    search = User.query.all()
-    for s in searches:
-        print (s)
-        print (s.author.username)
-
-    print ()
-    craigurl = 'https://minneapolis.craigslist.org/search/bia?query=bianchi&srchType=T&hasPic=1&search_distance=6&postal=55407&min_price=5&max_price=400'
-    # baseurl = 'https://minneapolis.craigslist.org/search/?query=bianchi&search_distance=6&postal=55407&min_price=5&max_price=400'
-
-    return render_template('home.html', searches=searches, craigurl=craigurl,)
+    searches = Searcher.query.all()         #Does a query for all Searcher objects
+    return render_template('home.html', searches=searches)
 
 
-
-#I am adding this because I was getting a search_id error
+#This is needed to get the search
 @app.route("/search/<int:search_id>")
 def search(search_id):
     search = Searcher.query.get_or_404(search_id)
     return render_template('search.html', category=search.category, search=search)
 
-#This is meant to delete searches...copied from delete posts
+
 @app.route("/search/<int:search_id>/delete",methods=['POST'])
 @login_required
-def delete_search(search_id):
+def delete_search(search_id):       #The delete search route takes the search id for the search and deletes that object
     search = Searcher.query.get_or_404(search_id)
     if search.author != current_user:
         abort(403)
@@ -205,17 +107,17 @@ def delete_search(search_id):
     flash('Your search has been deleted!', 'success')
     return redirect(url_for('home_search'))
 
-#Trying to view an individual post
-@app.route("/search/<int:search_id>/update",methods=['GET', 'POST'])
+
+@app.route("/search/<int:search_id>/update",methods=['GET', 'POST'])    #This route is for updating the search
 @login_required
-def update_search(search_id):
+def update_search(search_id):       #After being passed the search_id, this function updates a saved search
     search = Searcher.query.get_or_404(search_id)
     if search.author != current_user:
         abort(403)
     form = SearchForm()
     if form.validate_on_submit():
 
-        search.category = form.category.data
+        search.category = form.category.data        #If the update form is validated, the search_term will be updated
         search.search_term = form.search_term.data
         search.zip_code = form.zip_code.data
         search.max_distance = form.max_distance.data
@@ -223,132 +125,93 @@ def update_search(search_id):
         author = current_user
 
 
-        db.session.commit()
+        db.session.commit()     #The updated search is committed to the database
         flash('Your post has been updated!', 'success')
-        return redirect(url_for('home_search', search_id=search.id))
-    elif request.method == 'GET':
+        return redirect(url_for('home_search', search_id=search.id))    #They then get sent back to the saved_searches
+    elif request.method == 'GET':       #If the page is requested, it will pre-populate the form data
         form.category.data = search.category
         form.search_term.data = search.search_term
         form.zip_code.data = search.zip_code
         form.max_distance.data = search.max_distance
         form.max_price.data = search.max_price
 
-        # form.title.data = post.title
-        # form.content.data = post.content
     return render_template('create_search.html', title='Update Post', form=form, legend='Update Post')
 
-#Attempting to do the scraper route here that will actually have the results of a correct URL scraped
 
-@app.route("/search_results/<string:username>")
+@app.route("/search_results/<string:username>")     #This route takes constructs the URL(s), and parses them using Beautiful Soup
 def scrapedresults(username):
 
-    # Moving the section from home_search here to try to make the url strings.  Can move back if it doesn't work
+    user = User.query.filter_by(username=username).first_or_404()       #This gets the current user from the db
+    searches = Searcher.query.filter_by(author=user)        #This gets all of the current users saved searchs from the db
 
-    searches = Searcher.query.all()
+    search_term_rep_list = []       #Can maybe delete
 
-    user = User.query.filter_by(username=username).first_or_404()
-    searches = Searcher.query.filter_by(author=user)
-
-    search_term_rep_list = []
-
-    qsearches = []
+    constructed_urls = []       #This will be the list where completed URLs are contained
     for search in searches:
-        print("This is search")
-        print(search)
+        print("This is search: " + str(search))
         search_term_replace = search.search_term.replace(" ","+")  #Putting this here so the search term is concatenated with +'s in the craigslist request url
-        print ("This is search_term_replace")
-        print (search_term_replace)
-        search_term_rep_list.append(search_term_replace)
+        print ("This is search_term_replace: " + str(search_term_replace))
+        search_term_rep_list.append(search_term_replace)    #Putting the formatted search terms into the list
+        print ("This is search.category: " + str(search.category))
 
-        print ("This is search.category")
-        print(search.category)
-
+        #This is the URL request to Craigslist which contain variable names
         baseurl = 'https://minneapolis.craigslist.org/search/' + search.category + '?query=' + search_term_replace + '&srchType=T&hasPic=1&search_distance=' + search.max_distance + '&postal=' + search.zip_code + '&min_price=3&max_price=' + search.max_price
-        qsearches.append(baseurl)
-        print("This is baseurl")
-        print(baseurl)
+        constructed_urls.append(baseurl)        #Putting the completed urls into the contructed_urls list
+        print("This is baseurl: " + baseurl)
 
-        print(search.search_term)
-        print(search.zip_code)
-        print(search.max_distance)
-        print(search.max_price)
+        print("search.search_term" + str(search.search_term) + " search.zip_code: " + str(search.zip_code) + " search.max_distance: " + str(search.max_distance) + " search.max_price: " + str(search.max_price))
 
-    # testing the porting of the info into a URL here
-    print("This is qsearches")
-    print(qsearches)
-    for qsearch in qsearches:
-        print("qsearch: " + qsearch)
+    print("This is constructed_urls list: ")
+    for url in constructed_urls:
+        print("url: " + url)
 
-    print ("This is search_term_rep_list")
-    print (search_term_rep_list)
-    #finished moving qsearches here
+    print ("This is constructed_urls")
+    print (constructed_urls)
 
-
-
-    clist = [
-        'https://minneapolis.craigslist.org/search/bia?query=Cannondale&hasPic=1&search_distance=10&postal=55407&max_price=200',
-        'https://minneapolis.craigslist.org/search/bia?query=Diamondback&hasPic=1&search_distance=4&postal=55407&max_price=100']
-
-    print ("This is clist")
-    print (type(clist))
-    print (clist)
-    print ("This is qsearches")
-    print (type(qsearches))
-    print (qsearches)
-
+    #Making lists of the five items that need to be zipped together to create a list of lists
     titles_list = []
     prices_list_temp = []  # needed to make a temp list because bs was finding two prices on the page
-    prices_list = []
     date_posted_list = []
     images_list = []  # Testing one
     new_url_list = []
 
-    for c in qsearches:
-        print (c)
-        html_page = urllib.request.urlopen(c)
+    for url in constructed_urls:        #for each url in the saved_searches, Beautiful Soup will take it and scrape the HTML
+        print ("This is url")
+        print (url)
+        html_page = urllib.request.urlopen(url)
         soup = BeautifulSoup(html_page, "lxml")
 
         for post in soup.find_all('li', "result-row"):
 
-            # print ("This is post length")
-            # print (len(post))
-
-            for po in post.find_all("a","result-title hdrlnk"):  #titles loop, works properlly
+            for po in post.find_all("a","result-title hdrlnk"):  #titles loop, works properly
                 titles_list.append(po.text)
 
             for price in post.find_all('span', 'result-price'):      #price loop
                 prices_list_temp.append(price.text)
 
-            for dat in post.find_all("time","result-date"):      #price loop
+            for dat in post.find_all("time","result-date"):      #date posted loop
                 date_posted_list.append(dat.text)
 
-            for images in post.find_all("a","result-image gallery"):      #price loop
+            for images in post.find_all("a","result-image gallery"):      #image id loop
                 pic_id=images['data-ids']
                 cut_id = pic_id[2:19]  # This splits the returned data into just the id of the photo to be displayed
-                full_pic_url = "https://images.craigslist.org/" + cut_id + "_300x300.jpg"
+                full_pic_url = "https://images.craigslist.org/" + cut_id + "_300x300.jpg"   #This is the full url for the image
                 images_list.append(full_pic_url)
 
-            for url in post.find_all("a","result-title hdrlnk"):
+            for url in post.find_all("a","result-title hdrlnk"):        #anchor link
                 url_link = (url["href"])
-
                 new_url_list.append(url_link)
 
-    prices_list = [i for a, i in enumerate(prices_list_temp) if
-                   a % 2 == 0]  # using this to get every other price because it was duplicating by finding two prices when scraping
+    prices_list = [i for a, i in enumerate(prices_list_temp) if a % 2 == 0]  # using this to get every other price because it was duplicating by finding two prices when scraping
 
-    gaaah = list(zip(titles_list,prices_list,date_posted_list,images_list,new_url_list))
+    #This is the list of lists being zipped together to create saved_searches
+    zipped_searches = list(zip(titles_list,prices_list,date_posted_list,images_list,new_url_list))
 
-
-
-    print ("This is gaaah, and the type is right below that")
-    print (gaaah)
-    print (type(gaaah))
-
-    for item in gaaah:
+    for item in zipped_searches:
         print (item)
 
     if current_user == user:
-        return render_template('search_results.html', clist=clist, new_url_list=new_url_list,titles_list=titles_list,prices_list=prices_list,date_posted_list=date_posted_list,images_list=images_list, gaaah=gaaah, qsearches=qsearches, username=username)
+        return render_template('search_results.html',zipped_searches=zipped_searches,username=username)     #Directed to search_results page, passing on the zipped_searches
     else:
         abort (403)
 

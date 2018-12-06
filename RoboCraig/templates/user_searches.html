@@ -29,7 +29,7 @@
             <tbody>
             {% for hs in searches %}
             <tr>
-                    <td><a href="{{ url_for('search', search_id=hs.id) }}">{{ hs.search_term }}</a></td>
+                    <td>{{ hs.search_term }}</td>
                     <td>{{ hs.category}}</td>
                     <td>{{ hs.zip_code }}</td>
                     <td>{{ hs.max_distance }} miles</td>
