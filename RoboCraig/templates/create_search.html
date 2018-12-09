@@ -1,86 +1,121 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class="content-section">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">{{ legend }}</legend>
 
-                <div class="form-group">
-                    {{ form.category.label(class="form-control-label") }}
-                    {% if form.category.errors %}
-                        {{ form.category(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+    <div class="container py-3">
+        <div class="row">
+            <div class="mx-auto col-sm-6">
+                        <!-- form user info -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0" text-align="center">New Search</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="" class="form" role="form" autocomplete="off">
+                                {{ form.hidden_tag() }}
+                                {#        <form method="POST" action="" class="form-horizontal">#}
+{#            {{ form.hidden_tag() }}#}
+
+
+{#                                    <div class="form-group row col-lg-12">#}
+{#                                        {{ form.category.label(class="form-control-label") }}#}
+{#                                        {{ form.category(class="form-control form-control-lg") }}#}
+{##}
+{#                                    </div>#}
+{#                                    <div class="form-group row col-lg-12">#}
+{#                                        {{ form.search_term.label(class="form-control-label") }}#}
+{#                                        {{ form.search_term(class="form-control form-control-lg") }}#}
+{#                                    </div>#}
+{##}
+
+{#                                Starts here#}
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.category.label(class="form-control-label") }}
+                                    {% if form.category.errors %}
+                                        {{ form.category(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.category.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.category(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.search_term.label(class="form-control-label") }}
+                                    {% if form.search_term.errors %}
+                                        {{ form.search_term(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.search_term.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.search_term(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.zip_code.label(class="form-control-label") }}
+                                    {% if form.zip_code.errors %}
+                                        {{ form.zip_code(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.password.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.zip_code(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.max_distance.label(class="form-control-label") }}
+                                    {% if form.max_distance.errors %}
+                                        {{ form.max_distance(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.max_distance.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.max_distance(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.max_price.label(class="form-control-label") }}
+                                    {% if form.max_price.errors %}
+                                        {{ form.max_price(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.max_price.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.max_price(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+
+                                    <div class="form-group row">
+                                        {{ form.submit(class="btn btn-primary") }}
+
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    {% else %}
-                        {{ form.category(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.search_term.label(class="form-control-label") }}
-                    {% if form.search_term.errors %}
-                        {{ form.search_term(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.search_term(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.zip_code.label(class="form-control-label") }}
-                    {% if form.zip_code.errors %}
-                        {{ form.zip_code(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.zip_code(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.max_distance.label(class="form-control-label") }}
-                    {% if form.max_distance.errors %}
-                        {{ form.max_distance(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.max_distance(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.max_price.label(class="form-control-label") }}
-                    {% if form.max_price.errors %}
-                        {{ form.max_price(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.max_price(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+                        <!-- /form user info -->
             </div>
-        </form>
+        </div>
     </div>
+
+
 {% endblock content %}

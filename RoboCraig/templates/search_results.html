@@ -3,22 +3,23 @@
 
 <h1>Scraped Results</h1>
 
-<table class="table">
-    <thead class="thead-dark">
+<table class="table table-responsive table-hover">
+    <thead class="thead-light">
         <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Price</th>
-            <th scope="col">Posted</th>
-            <th scope="col">Image</th>
+            <th scope="col" class="text-center">Image</th>
+            <th scope="col" class="text-center">Title</th>
+            <th scope="col" class="text-center">Price</th>
+            <th scope="col" class="text-center">Date Posted</th>
         </tr>
     </thead>
     <tbody>
-    {% for search_item in zipped_searches %}:
+    {% for search_item in zipped_searches %}
         <tr>
-            <td><a href="{{ search_item[4] }}" target="_blank">{{ search_item[0] }}</a></td>
-            <td>{{ search_item[1] }}</td>
-            <td>{{ search_item[2] }}</td>
-            <td><img src="{{ search_item[3] }}"</td>
+            <td><img src="{{ search_item[3] }}" class="img-responsive" height="250px" width="250px"></td>
+            <td class="text-center"><a href="{{ search_item[4] }}" target="_blank">{{ search_item[0] }}</a></td>
+            <td class="text-center"><b>{{ search_item[1] }}</b></td>
+            <td class="text-center">{{ search_item[2] }}</td>
+
 {#            <td><a href="{{ search_item[4] }}" target="_blank">Craigslist Post Link</a></td>#}
         </tr>
 

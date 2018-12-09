@@ -70,7 +70,7 @@ def new_search():
         db.session.add(searcher)
         db.session.commit()
         flash('Your search has been created!', 'success')
-        return redirect(url_for('home_search'))
+        return redirect(url_for('user_searches', username=current_user.username))
     return render_template('create_search.html', form=form,legend='New Post',username=current_user.username)  #If the form is not valid, the user stays on the create_serach page
 
 
@@ -105,7 +105,7 @@ def delete_search(search_id):       #The delete search route takes the search id
     db.session.delete(search)
     db.session.commit()
     flash('Your search has been deleted!', 'success')
-    return redirect(url_for('home_search'))
+    return redirect(url_for('user_searches', username=current_user.username))
 
 
 @app.route("/search/<int:search_id>/update",methods=['GET', 'POST'])    #This route is for updating the search
