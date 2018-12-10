@@ -65,5 +65,5 @@ class SearchForm(FlaskForm):        #using the choices to give the user a dropdo
     zip_code = StringField('Zip Code', validators=[DataRequired()])
     max_distance = StringField('Max Distance', validators=[DataRequired()])
     max_price = StringField('Max Price', validators=[DataRequired()])
-    submit = SubmitField('Post')
+    submit = SubmitField('Save Search')
 

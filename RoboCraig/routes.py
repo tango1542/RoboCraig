@@ -40,21 +40,44 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()    #using the flask login module to logout
-    return redirect(url_for('home_search'))
+    return redirect(url_for('landing'))
 
 
-@app.route("/account")
+@app.route("/account", methods=['GET','POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account',username=current_user.username)
+    form=UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    return render_template('account.html', title='Account',username=current_user.username, form=form)
 
 
 @app.route("/users/<string:username>")  #This is the main home route for a logged in user.  It will display their saved searches
 def user_searches(username):
+    # Dictionary is to display the actual search category name instead of the 3 letter code that goes in a Craigslist URL
+    choices = {'ata': 'Antiques', 'ppa': 'Appliances', 'ara': 'Arts & Crafts', 'sna': 'ATV/UTV/SNO', 'pta': 'AutoParts',
+               'ava': 'Aviation',
+               'baa': 'Baby and Kid Stuff', 'haa': 'Beauty and Health', 'bip': 'Bike Parts',
+               'bia': 'Bikes', 'bpa': 'Boat Parts', 'boo': 'Boats', 'bka': 'Books', 'bfa': 'Business',
+               'cta': 'Cars & Trucks', 'ema': 'CDs/DVDs/VHSs', 'moa': 'Cell Phones', 'cla': 'Clothes & Acc',
+               'cba': 'Collectibles', 'syp': 'Computer Parts', 'sya': 'Computers', 'ela': 'Electronics',
+               'gra': 'Farm & Garden', 'fua': 'Furniture', 'foa': 'General', 'hva': 'Heavy Equipment',
+               'hsa': 'Household',
+               'jwa': 'Jewelry', 'maa': 'Materials', 'mpa': 'Motorcycle Parts', 'mca': 'Motorcycles',
+               'msa': 'Music Instruments', 'pha': 'Photo & Video', 'rva': 'RVs & Camp', 'sga': 'Sporting',
+               'tia': 'Tickets', 'tla': 'Tools', 'taa': 'Toys & Games', 'tra': 'Trailers',
+               'vga': 'Video Gaming', 'wta': 'Wheels & Tires'}
     user = User.query.filter_by(username=username).first_or_404()  #giving the function the username attribute returns the username of the current_user
     searches = Searcher.query.filter_by(author=user)   #Using this username, it retrieves a list of their Searcher objects
     if current_user == user:        #Will only render the template if the user is logged in.  Otherwise, they receive a 403
-        return render_template('user_searches.html', searches=searches, user=user, username=username)
+        return render_template('user_searches.html', searches=searches, user=user, username=username,choices=choices)
     else:
         abort(403)
 
@@ -83,7 +106,7 @@ def landing():
 
 
 @app.route("/home")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
-@login_required         #Regardless, only a logged in user can view this page
+         #Regardless, only a logged in user can view this page
 def home_search():
     searches = Searcher.query.all()         #Does a query for all Searcher objects
     return render_template('home.html', searches=searches)
@@ -127,7 +150,7 @@ def update_search(search_id):       #After being passed the search_id, this func
 
         db.session.commit()     #The updated search is committed to the database
         flash('Your post has been updated!', 'success')
-        return redirect(url_for('home_search', search_id=search.id))    #They then get sent back to the saved_searches
+        return redirect(url_for('user_searches', search_id=search.id,username=current_user.username))    #They then get sent back to the saved_searches
     elif request.method == 'GET':       #If the page is requested, it will pre-populate the form data
         form.category.data = search.category
         form.search_term.data = search.search_term
@@ -146,6 +169,7 @@ def scrapedresults(username):
 
     search_term_rep_list = []       #Can maybe delete
 
+    catz=[]
     constructed_urls = []       #This will be the list where completed URLs are contained
     for search in searches:
         print("This is search: " + str(search))
@@ -172,16 +196,22 @@ def scrapedresults(username):
     titles_list = []
     prices_list_temp = []  # needed to make a temp list because bs was finding two prices on the page
     date_posted_list = []
-    images_list = []  # Testing one
+    images_list = []
     new_url_list = []
+    term_list = []     #This list will be able to pass the name of the search to the saved search
 
     for url in constructed_urls:        #for each url in the saved_searches, Beautiful Soup will take it and scrape the HTML
         print ("This is url")
         print (url)
         html_page = urllib.request.urlopen(url)
         soup = BeautifulSoup(html_page, "lxml")
+        term = soup.find("input",{'name':'query'})['value']     #Getting the input box from BS4 to be able to get the name of the search
+        print ("This is term: " + term)
 
         for post in soup.find_all('li', "result-row"):
+            term_list.append(term)
+
+            # query.flatinput.ui - autocomplete - input.ui - autocomplete - loading
 
             for po in post.find_all("a","result-title hdrlnk"):  #titles loop, works properly
                 titles_list.append(po.text)
@@ -202,10 +232,12 @@ def scrapedresults(username):
                 url_link = (url["href"])
                 new_url_list.append(url_link)
 
+    print ("This is term_list")
+    print (term_list)
     prices_list = [i for a, i in enumerate(prices_list_temp) if a % 2 == 0]  # using this to get every other price because it was duplicating by finding two prices when scraping
 
     #This is the list of lists being zipped together to create saved_searches
-    zipped_searches = list(zip(titles_list,prices_list,date_posted_list,images_list,new_url_list))
+    zipped_searches = list(zip(titles_list,prices_list,date_posted_list,images_list,new_url_list,term_list))
 
     for item in zipped_searches:
         print (item)

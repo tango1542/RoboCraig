@@ -1,5 +1,65 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>{{ current_user.username }}</h1>
-    <h1>{{ current_user.email }}</h1>
+
+         <div class="container py-3">
+        <div class="row">
+            <div class="mx-auto col-sm-6">
+                        <!-- form user info -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0" text-align="center">Account</h4>
+                            </div>
+                            <div class="card-body">
+                                    <h2 class="account-heading">{{ current_user.username }}</h2>
+                                      <p class="text-secondary">{{ current_user.email }}</p>
+                            </div>
+                        </div><br><br>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0" text-align="center">Update Account</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="" class="form" role="form" autocomplete="off">
+                                {{ form.hidden_tag() }}
+                                    <fieldset class="form-group">
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.username.label(class="form-control-label") }}
+                                    {% if form.username.errors %}
+                                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.username.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.username(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+
+                                    <div class="form-group row col-lg-12">
+                                    {{ form.email.label(class="form-control-label") }}
+                                    {% if form.email.errors %}
+                                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.email.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.email(class="form-control form-control-lg") }}
+                                    {% endif %}
+                                    </div>
+                                    </fieldset>
+                                    <div class="form-group">
+                                        {{ form.submit(class="btn btn-primary") }}
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /form user info -->
+            </div>
+        </div>
+    </div>
+
 {% endblock content %}
