@@ -76,8 +76,26 @@ def user_searches(username):
                'vga': 'Video Gaming', 'wta': 'Wheels & Tires'}
     user = User.query.filter_by(username=username).first_or_404()  #giving the function the username attribute returns the username of the current_user
     searches = Searcher.query.filter_by(author=user)   #Using this username, it retrieves a list of their Searcher objects
+    print ("This is searches")
+    print (type(searches))
+    print (searches)
+    # print (searches.user)
+    testsearches = Searcher.query.filter_by(author=user).first()
+    print ("This is testsearches")
+    print (testsearches)
+
+    if searches is None:
+        print ("Hello")
+    else:
+        print ("howdeedoodee")
+    for s in searches:
+        if s == 0:
+            print ("none here")
+        else:
+            print ("something here")
+
     if current_user == user:        #Will only render the template if the user is logged in.  Otherwise, they receive a 403
-        return render_template('user_searches.html', searches=searches, user=user, username=username,choices=choices)
+        return render_template('user_searches.html', searches=searches, user=user, username=username,choices=choices,testsearches=testsearches)
     else:
         abort(403)
 
@@ -111,6 +129,12 @@ def home_search():
     searches = Searcher.query.all()         #Does a query for all Searcher objects
     return render_template('home.html', searches=searches)
 
+
+@app.route("/userz")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
+         #Regardless, only a logged in user can view this page
+def userz():
+    users = User.query.all()         #Does a query for all Searcher objects
+    return render_template('userz.html', users=users)
 
 #This is needed to get the search
 @app.route("/search/<int:search_id>")
