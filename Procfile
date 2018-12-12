@@ -1,1 +1,1 @@
-web: gunicorn app:RoboCraig
+web: gunicorn RoboCraig:app
