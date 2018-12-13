@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'RoboCraig'
+project = 'RoboCopy'
 copyright = '2018, Jeff Peterson'
 author = 'Jeff Peterson'
 
@@ -102,7 +102,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RoboCraigdoc'
+htmlhelp_basename = 'RoboCopydoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -129,7 +129,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'RoboCraig.tex', 'RoboCraig Documentation',
+    (master_doc, 'RoboCopy.tex', 'RoboCopy Documentation',
      'Jeff Peterson', 'manual'),
 ]
 
@@ -139,7 +139,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'robocraig', 'RoboCraig Documentation',
+    (master_doc, 'robocopy', 'RoboCopy Documentation',
      [author], 1)
 ]
 
@@ -150,8 +150,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'RoboCraig', 'RoboCraig Documentation',
-     author, 'RoboCraig', 'One line description of project.',
+    (master_doc, 'RoboCopy', 'RoboCopy Documentation',
+     author, 'RoboCopy', 'One line description of project.',
      'Miscellaneous'),
 ]
 

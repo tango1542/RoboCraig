@@ -23,8 +23,6 @@ class FlaskTestCase(unittest.TestCase):
     def test_page_redirect(self):
         tester = app.test_client(self)
         response = tester.get('/', content_type='html/text')
-        print (tester)
-        print (response.data)
         self.assertTrue(b'Enter some search details' in response.data)
 
 
