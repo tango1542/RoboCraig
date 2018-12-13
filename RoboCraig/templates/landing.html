@@ -1,37 +1,36 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<h3 style="text-align: center">Welcome to</h3>
 <img src="{{url_for('static', filename='robocraig.jpg')}}" style="width: 100%;height: auto" />
 
-<div style="text-align: center"><br>
-    <h3>Welcome to Robocraig</h3><br>
+<div><br>
 
-    <h4>
-        Enter some search details for an item in Minneapolis Craigslist<br><br>
-        Your searches will be saved<br><br>
-        Robocraig will automatically search for Craigslist results with those details<br><br>
-        You can update your searches with different filters, and you can delete your searches<br><br>
-        <a href="{{ url_for('register')}}">Register</a> to begin creating searches, or <a href="{{ url_for('login')}}">login</a> if you already have an account<br><br>
 
-    </h4>
+    <div class="jumbotron" style="background-color: aliceblue">
+        <h5>
+            <ul>
+                <li>Enter some search details for an item in Minneapolis Craigslist</li><br>
+                <li>Your searches will be saved</li><br>
+                <li>Robocraig will automatically search for Craigslist results with those details</li><br>
+                <li>You can update your searches with different filters, and you can delete your searches</li><br>
+                <li><a href="{{ url_for('register')}}">Register</a> to begin creating searches, or <a href="{{ url_for('login')}}">login</a> if you already have an account</li>
+            </ul>
 
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-sm">
-            <p style="text-align: center"><strong>Create a search</strong></p>
-            <img src="{{url_for('static', filename='lan1.jpg')}}" style="width: 100%;height: auto" />
-        </div>
-        <div class="col-sm">
-            <p style="text-align: center"><strong>Review your Saved Searches</strong></p>
-            <img src="{{url_for('static', filename='lan2.jpg')}}" style="width: 100%;height: auto" />
-        </div>
-        <div class="col-sm">
-            <p style="text-align: center"><strong>Scrape Searches from Craigslist</strong></p>
-            <img src="{{url_for('static', filename='lan3.jpg')}}" style="width: 100%;height: auto" />
-        </div>
-
+        </h5>
     </div>
+</div><br>
+<div class="container">
+
+
+
+    <h2>Step 1: Create a search</h2>
+    <img src="{{url_for('static', filename='lan1.jpg')}}" style="width: 100%;height: auto" /><br><br><br><br>
+    <h2>Step 2: Review your Saved Searches</h2><br>
+    <img src="{{url_for('static', filename='lan4.jpg')}}" style="width: 100%;height: auto" /><br><br>
+    <h2>Step 3: Scrape Searches from Craigslist</h2><br>
+    <img src="{{url_for('static', filename='lan5.jpg')}}" style="width: 100%;height: auto" />
+
 
 </div>
 

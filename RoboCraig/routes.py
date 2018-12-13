@@ -84,16 +84,6 @@ def user_searches(username):
     print ("This is testsearches")
     print (testsearches)
 
-    if searches is None:
-        print ("Hello")
-    else:
-        print ("howdeedoodee")
-    for s in searches:
-        if s == 0:
-            print ("none here")
-        else:
-            print ("something here")
-
     if current_user == user:        #Will only render the template if the user is logged in.  Otherwise, they receive a 403
         return render_template('user_searches.html', searches=searches, user=user, username=username,choices=choices,testsearches=testsearches)
     else:
