@@ -52,7 +52,6 @@ pyOpenSSL==18.0.0
 pyparsing==2.3.0
 pypiwin32==223
 pytz==2018.5
-pywin32==224
 queuelib==1.5.0
 requests==2.20.0
 requests-oauthlib==0.7.0
