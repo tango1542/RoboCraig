@@ -1,5 +1,3 @@
-Auto Generated Documentation
-============================
+Code
+====
 
-.. automodule:: RoboCraig
-  :members:
