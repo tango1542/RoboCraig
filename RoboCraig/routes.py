@@ -113,18 +113,18 @@ def landing():
         return render_template('landing.html')
 
 
-# @app.route("/home")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
-#          #Regardless, only a logged in user can view this page
-# def home_search():
-#     searches = Searcher.query.all()         #Does a query for all Searcher objects
-#     return render_template('home.html', searches=searches)
+@app.route("/home")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
+         #Regardless, only a logged in user can view this page
+def home_search():
+    searches = Searcher.query.all()         #Does a query for all Searcher objects
+    return render_template('home.html', searches=searches)
 
 
-# @app.route("/userz")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
-#          #Regardless, only a logged in user can view this page
-# def userz():
-#     users = User.query.all()         #Does a query for all Searcher objects
-#     return render_template('userz.html', users=users)
+@app.route("/userz")         #This route displays all saved searches from all users.  It is currently active, but will become inactive for the live project
+         #Regardless, only a logged in user can view this page
+def userz():
+    users = User.query.all()         #Does a query for all Searcher objects
+    return render_template('userz.html', users=users)
 
 #This is needed to get the search
 @app.route("/search/<int:search_id>")
