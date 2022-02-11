@@ -64,7 +64,7 @@ snowballstemmer==1.2.1
 Sphinx==1.8.2
 sphinxcontrib-websupport==1.1.0
 SQLAlchemy==1.2.12
-Twisted==18.9.0
+Twisted==22.1.0
 unsplash==1.0.0a2
 urllib3==1.23
 w3lib==1.19.0
